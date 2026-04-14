@@ -21,7 +21,12 @@ st.write("Find similar movies, combine multiple favorites, or browse top movies 
 # -----------------------------------
 @st.cache_data
 def load_data():
-    movies = pd.read_csv("movies.csv")
+    movies = pd.read_csv("movies_merged.csv")
+
+    movies["title"] = movies["title"].fillna("").astype(str)
+    movies["genres"] = movies["genres"].fillna("").astype(str)
+    movies["genres_clean"] = movies["genres_clean"].fillna("").astype(str)
+
     return movies
 
 @st.cache_resource
