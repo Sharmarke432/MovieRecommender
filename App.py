@@ -171,26 +171,37 @@ if mode in ["Similar to one movie", "Similar to multiple movies"]:
 if mode == "Similar to one movie":
     st.subheader("Recommend movies similar to one title")
 
-    selected_title = st.selectbox(
-        "Choose a movie",
-        sorted(movies["title"].dropna().unique())
-    )
+    search_query = st.text_input("Type a movie title")
 
-    if st.button("Get recommendations", key="single_movie_btn"):
-        results = get_recommendations(
-            title=selected_title,
-            top_n=top_n,
-            min_shared_genres=min_shared_genres,
-            alpha=alpha,
-            min_ratings=min_ratings
+    if search_query:
+        matching_titles = sorted(
+            movies[movies["title"].str.contains(search_query, case=False, na=False)]["title"].unique()
+        )
+    else:
+        matching_titles = sorted(movies["title"].dropna().unique())
+
+    if len(matching_titles) == 0:
+        st.warning("No matching movies found.")
+    else:
+        selected_title = st.selectbox(
+            "Select a movie from matching results",
+            matching_titles
         )
 
-        if results.empty:
-            st.warning("No recommendations found.")
-        else:
-            st.success(f"Showing recommendations similar to: {selected_title}")
-            st.dataframe(results, use_container_width=True)
+        if st.button("Get recommendations", key="single_movie_btn"):
+            results = get_recommendations(
+                title=selected_title,
+                top_n=top_n,
+                min_shared_genres=min_shared_genres,
+                alpha=alpha,
+                min_ratings=min_ratings
+            )
 
+            if results.empty:
+                st.warning("No recommendations found.")
+            else:
+                st.success(f"Showing recommendations similar to: {selected_title}")
+                st.dataframe(results, use_container_width=True)
 
 elif mode == "Similar to multiple movies":
     st.subheader("Recommend movies based on multiple favorites")
