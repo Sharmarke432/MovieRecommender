@@ -19,7 +19,7 @@ The application is deployed with an interactive **Streamlit** frontend, featurin
 
 ---
 
-## 🛠️ Technical Implementation
+## Technical Implementation
 
 ### 1. Data Preprocessing (`Pandas`)
 * **Data Integration:** Merged MovieLens `movies.csv` and `ratings.csv` to combine text data with user rating behaviors.
@@ -29,24 +29,9 @@ The application is deployed with an interactive **Streamlit** frontend, featurin
 ### 2. Machine Learning Logic (`Scikit-Learn`)
 * **TF-IDF Vectorization:** Converted the cleaned textual genre data into numerical vectors. Rare genres are given higher weight, penalizing generic terms.
 * **Cosine Similarity:** Computed the angular distance between the vectorized input movie and the rest of the dataset. To optimize memory usage (preventing 16GB RAM overflow), similarity vectors are computed **on-the-fly** at runtime rather than storing an $N \times N$ matrix.
-* **Hybrid Sorting:** Results are ranked primarily by their Cosine Similarity score, and secondarily by their Average User Rating to break ties and ensure high-quality suggestions.
 
 ### 3. Deployment (`Streamlit` & `AWS S3` / `HuggingFace`)
 * Built an interactive frontend using Streamlit.
 * Implemented searchable dropdowns (`st.selectbox` with `index=None`) for a seamless User Experience.
-* Pickled models (`movies_df.pkl` and `tfidf_matrix.pkl`) are securely stored off-repository and loaded via caching (`@st.cache_data`) for rapid inference.
 
 ---
-
-## 📂 Repository Structure
-
-```text
-├── data/
-│   ├── movies.csv          # Raw MovieLens data (ignored in Git)
-│   └── ratings.csv         # Raw MovieLens ratings (ignored in Git)
-├── notebooks/
-│   └── recommender.ipynb   # EDA, Data Cleaning, and Model building process
-├── app.py                  # Main Streamlit application script
-├── requirements.txt        # Python dependencies
-├── .gitignore              # Hides large datasets and .pkl model files
-└── README.md               # Project documentation
